@@ -1,0 +1,7 @@
+python-telegram-bot[job-queue]
+python-telegram-bot[webhooks]
+requests
+aiohttp
+aiofiles
+python-dotenv
+
