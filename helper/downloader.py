@@ -1,3 +1,4 @@
+import time
 
 from aiohttp import ClientSession
 from aiohttp.client_exceptions import ClientConnectorDNSError, ClientResponseError
@@ -7,10 +8,13 @@ from urllib.parse import unquote, urlparse
 import asyncio
 import os
 from telegram.ext import ContextTypes
+from telegram.constants import ParseMode
 from telegram import Update
-
+import helper.messages as messages
 from config import Config
 from helper.utils import log_admin
+
+
 #----Méthodes statiques----
 async def get_filename_from_headers(headers : dict) -> str | None:
     """
@@ -100,11 +104,52 @@ async def get_file_size(headers : dict) -> float:
 
 async def afficher_carre(progress :int | float) -> str:
     progress = int(progress)
-    carre = "▣" * (progress // 10) + (10 - (progress // 10)) * "▢"
-    return carre
+    done = progress // 10
+    remaining = 10 - done
+    return ("▣" * done) + (remaining * "▢")
 
 async def calcul_pourcentage(current_size, total_size):
     return current_size * 100 / total_size
+
+def humanbytes(size):
+    # https://stackoverflow.com/a/49361727/4723940
+    #https://github.com/AbirHasan2005/Rename-Bot/blob/main/bot/core/display.py
+    # 2**10 = 1024
+    if not size:
+        return ""
+    power = 2**10
+    n = 0
+    Dic_powerN = {0: ' ', 1: 'Ki', 2: 'Mi', 3: 'Gi', 4: 'Ti'}
+    while size > power:
+        size /= power
+        n += 1
+    return str(round(size, 2)) + " " + Dic_powerN[n] + 'B'
+
+def TimeFormatter(milliseconds: int) -> str:
+    """
+    Source : https://github.com/AbirHasan2005/Rename-Bot/blob/main/bot/core/display.py
+    :param milliseconds: Millisecondes
+    :return: Un formattage parlant pas en millisecondes
+    """
+    seconds, milliseconds = divmod(int(milliseconds), 1000)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    tmp = ((str(days) + " days, ") if days else "") + \
+          ((str(hours) + " hours, ") if hours else "") + \
+          ((str(minutes) + " min, ") if minutes else "") + \
+          ((str(seconds) + " sec, ") if seconds else "") + \
+          ((str(milliseconds) + " millisec, ") if milliseconds else "")
+    return tmp[:-2]
+
+def sanitize_filename(name):
+    """
+    Fonction de nettoyage basique. Merci Claude
+    :param name: Nom à netoyer
+    :return:
+    """
+    return re.sub(r'[\\/:*?"<>|]', '', name)
+
 class Downloader:
 
     def __init__(self, url : str):
@@ -116,7 +161,7 @@ class Downloader:
         depuis soit les headers ou le lien, si aucune correspondace n'est trouvé retourne None
         :return: None si aucune correspondace n'est trouvé, un dictionnaire contenant le nom du fichier,
          son extension et sa taille (Si la taille n'est pas trouvé, on retourne 0) dans le cas contraire
-        :raise ValueError si le lien de téléchargement n'est pas atteignable ou que l'on arrive pas à recuperer
+        :raise ValueError si le lien de téléchargement n'est pas atteignable ou que l'on n'arrive pas à recuperer
         le nom du fichier
         """
         async with ClientSession() as session:
@@ -164,20 +209,107 @@ class Downloader:
 
     async def download_file(
             self,
-            filename : str,
+            filename_with_ext : str,
             context : ContextTypes.DEFAULT_TYPE,
+            chat_id : str | int,
             msg_id : int,
             path : str = Config.DOWNLOAD_DIR,
     ) -> bool:
         """
         Fonction asynchrone qui télécharge un fichier, notifie son avancement sur un message
         et l'enregistre vers le chemin spécifié
-        :param filename: Nom du fichier
+        :param filename_with_ext: Nom du fichier avec l'extension
         :param context: Objet context englobant toutes les methosdes relatives au bot
-        :param msg_id: Id du message sur lequel l'avancé du telechargement sera visisble
-        :param path: Chemjn vers lequel le fichier sera téléchargé
-        :return: Un booleen True si le télécharge se termine sans erreur, False sinon
+        :param chat_id: Id de la discussion dans laquelle le téléchargement a été lancé
+        :param msg_id: Id du message sur lequel l'avancée du telechargement sera visisble
+        :param path: Chemin vers lequel le fichier sera téléchargé
+        :return: Un booleen True si le téléchargement se termine sans aucune erreur, False sinon
         """
+        try:
+            await context.bot.edit_message_text(
+                messages.DOWNLOAD_START.format(filename_with_ext),
+                chat_id,
+                msg_id,
+                parse_mode=ParseMode.HTML
+            )
+            if not os.path.isdir(path):
+                os.makedirs(path, exist_ok=True)
+            try:
+                async with ClientSession() as session:
+                    async with session.get(self.url) as response:
+                        response.raise_for_status()
+                        #On essaie de recuperer le poidds total du fichier dupuis les headers
+                        #On recupere 0 si le poids n'existe pas
+                        total_size = int(response.headers.get('Content-Length', 0))
+                        current_size = 0
+                        already_modified = set()
+                        start = time.time()
+                        filename_with_ext = sanitize_filename(filename_with_ext)
+                        async with aiofiles.open(path + filename_with_ext, "wb") as f:
+                            async for chunck in response.content.iter_chunked(10240):
+                                await f.write(chunck)
+                                current_size += len(chunck)
+                                #Si on n'a pas pu obtenir le poids du fichier, on continue le téléchargement sans afficher
+                                #la progression
+                                if total_size == 0:
+                                    continue
+                                pourcentage = await calcul_pourcentage(current_size, total_size)
+                                #On modifie la barre de progression tous les 5% d'avancés
+                                #Ca va etre un peu brutal!!!!!
+                                if int(pourcentage) % 5 == 0 and int(pourcentage) not in already_modified:
+                                    now = time.time()
+                                    diff = now - start
+                                    speed = current_size / diff
+                                    elapsed_time = round(diff) * 1000
+                                    time_to_completion = round((total_size - current_size) / speed) * 1000
+                                    estimated_total_time = elapsed_time + time_to_completion
+                                    estimated_total_time = TimeFormatter(estimated_total_time)
+                                    msg = f"{afficher_carre(pourcentage)}\n" + \
+                                        messages.PROGRESS.format(
+                                            pourcentage,
+                                            humanbytes(current_size),
+                                            humanbytes(total_size),
+                                            humanbytes(speed),
+                                            estimated_total_time if estimated_total_time != '' else "0 s"
+                                        )
+                                    await context.bot.edit_message_text(
+                                        msg,
+                                        chat_id,
+                                        msg_id,
+                                        ParseMode.HTML
+                                    )
+                                    already_modified.add(int(pourcentage))
+                await context.bot.edit_message_text(
+                    messages.DOWNLOAD_FINISHED,
+                    chat_id,
+                    msg_id,
+                    ParseMode.HTML
+                )
+                return True
+            except (ClientResponseError, ClientConnectorDNSError):
+                await context.bot.edit_message_text(
+                    "Une erreur est survenue lors du télécharment❌",
+                    chat_id,
+                    msg_id,
+                )
+                return False
+
+        except Exception as e:
+            await context.bot.edit_message_text(
+                    "Une erreur est survenue lors du télécharment❌",
+                    chat_id,
+                    msg_id,
+            )
+            await log_admin(
+                f"Une erreur innatendue s'est produite lors d'un téléchargement : {e}",
+                "download_file"
+            )
+            return False
+
+
+
+
+
 
 
 
@@ -191,4 +323,6 @@ async def main():
     except ValueError as e:
         print(f"Erreur : {e}")
 if __name__ == '__main__':
+    # print(os.path.isdir(Config.DOWNLOAD_DIR))
+    # print(os.mkdir(Config.DOWNLOAD_DIR))
     pass

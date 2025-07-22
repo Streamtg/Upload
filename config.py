@@ -16,5 +16,5 @@ class Config:
 
     LOG_BOT_TOKEN = int(os.getenv("LOG_BOT_TOKEN"))
 
-    DOWNLOAD_DIR = "../downloads"
+    DOWNLOAD_DIR = "../downloads/"
 
