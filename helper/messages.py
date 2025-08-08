@@ -1,11 +1,10 @@
 DOWNLOAD_START = "🤖Début du Télechargement de <b>{}</b>...🚀"
 
 PROGRESS = """
-⏳ <b>Pourcentage:</b> <em>{0}%</em>
-✅ <b>Done:</b> <em>{1}</em>
-꩜ <b>Total:</b> <em>{2}</em>
-📶 <b>Vitesse:</b> <em>{3}/s</em>
-🕰 <b>Temps Restant:</b> <em>{4}</em>
+⏳ <b>Pourcentage:</b> {0}%
+📥 <b>Téléchargé:</b> {1} / {2}
+⚡️ <b>Vitesse:</b> {3}/s
+🕰 <b>Temps Restant:</b> {4}
 """
 
 DOWNLOAD_FINISHED = "<b>🤖✅Téléchargement terminé!!!, Traitement en cours...</b>"

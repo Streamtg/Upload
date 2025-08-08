@@ -12,6 +12,7 @@ async def log_admin(log_text : str, scope : str = "[Renamer Bot]") -> None:
     :return: Rien du tout, si l'envoi de la notification ne reussit pas, on affiche l'erreur dans la console
     :rtype: None
     """
+    print("Loguaueue")
     url = f"https://api.telegram.org/bot{Config.LOG_BOT_TOKEN}/sendMessage"
     data = {
         "chat_id" : Config.DEVELOPPER_ID,
@@ -21,6 +22,7 @@ async def log_admin(log_text : str, scope : str = "[Renamer Bot]") -> None:
         try:
             async with session.post(url, data=data) as response:
                 if response.status != 200:
-                    print("❌ Échec de la notification Telegram vers vous meme")
+                    print(f"❌ Échec de la notification Telegram vers vous meme"
+                          f"\n\nErreur voulu envoyé : [{scope}] : {log_text}")
         except Exception as e:
-            print(f"❌ Erreur notification: {e}\n\nErreur voulu envoyé : [{scope}] : {text}")
+            print(f"❌ Erreur notification: {e}\n\nErreur voulu envoyé : [{scope}] : {log_text}")
