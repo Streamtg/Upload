@@ -7,11 +7,11 @@ import re
 import os
 from telegram.constants import ParseMode
 from telegram import Bot
-import helper.messages as messages
+import helpers.messages as messages
 from config import Config
-from helper.downloader.DownloadResult import DownloadResult
-from helper.utils import log_admin
-from helper.downloader.download_utils import generate_download_cancel_button
+from helpers.downloader.DownloadResult import DownloadResult
+from helpers.utils import log_admin
+from helpers.downloader.download_utils import generate_download_cancel_button
 
 
 #--------Méthodes statiques--------

@@ -1,13 +1,13 @@
 from yarl import URL
 
-from helper.downloader.ReadyToDownload import ReadyToDownload
+from helpers.downloader.ReadyToDownload import ReadyToDownload
 
 from aiohttp import ClientSession
 from aiohttp.client_exceptions import ClientConnectorDNSError, ClientResponseError
 import re
 from urllib.parse import unquote, urlparse
 
-from helper.utils import log_admin
+from helpers.utils import log_admin
 
 async def get_filename_from_headers(headers : dict) -> str | None:
     """
