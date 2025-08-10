@@ -1,7 +1,8 @@
-python-telegram-bot[job-queue]
-python-telegram-bot[webhooks]
+hachoir
+pyrogram
+tgcrypto
+uvloop
 requests
 aiohttp
 aiofiles
 python-dotenv
-

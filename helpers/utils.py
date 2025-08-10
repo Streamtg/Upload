@@ -1,5 +1,8 @@
+
 from aiohttp import ClientSession
+
 from config import Config
+
 
 async def log_admin(log_text : str, scope : str = "[Renamer Bot]") -> None:
     """
@@ -12,7 +15,6 @@ async def log_admin(log_text : str, scope : str = "[Renamer Bot]") -> None:
     :return: Rien du tout, si l'envoi de la notification ne reussit pas, on affiche l'erreur dans la console
     :rtype: None
     """
-    print("Loguaueue")
     url = f"https://api.telegram.org/bot{Config.LOG_BOT_TOKEN}/sendMessage"
     data = {
         "chat_id" : Config.DEVELOPPER_ID,

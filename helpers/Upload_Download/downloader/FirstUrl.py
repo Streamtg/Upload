@@ -1,6 +1,4 @@
-from yarl import URL
-
-from helpers.downloader.ReadyToDownload import ReadyToDownload
+from helpers.Upload_Download.downloader.ReadyToDownload import ReadyToDownload
 
 from aiohttp import ClientSession
 from aiohttp.client_exceptions import ClientConnectorDNSError, ClientResponseError
@@ -113,20 +111,6 @@ async def get_file_size(headers : dict, url : str) -> float:
             return 0.0
     return float(size)
 
-def humanbytes(size):
-    # https://stackoverflow.com/a/49361727/4723940
-    #https://github.com/AbirHasan2005/Rename-Bot/blob/main/bot/core/display.py Légerement modifié
-    # 2**10 = 1024
-    if not size:
-        return ""
-    power = 2**10
-    n = 0
-    Dic_powerN = {0: ' ', 1: 'K', 2: 'M', 3: 'G', 4: 'T'}
-    while size > power:
-        size /= power
-        n += 1
-    return str(round(size, 2)) + " " + Dic_powerN[n] + 'b'
-
 class FirstUrl:
 
     def __init__(self, url : str, chat_id : int):
@@ -155,7 +139,7 @@ class FirstUrl:
                     #On verifie si on a atteint le lien final, si oui on sort de la boucle
                     if response_url == url:
                         break
-                    #Sinon on continue à suivre les redirections
+                    #Sinon, on continue à suivre les redirections
                     url = response_url
                     redirects -= 1
                     continue

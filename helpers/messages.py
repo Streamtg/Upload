@@ -7,7 +7,10 @@ PROGRESS = """
 🕰 <b>Temps Restant:</b> {4}
 """
 
-DOWNLOAD_FINISHED = "<b>🤖✅Téléchargement terminé!!!, Traitement en cours...</b>"
+DOWNLOAD_FINISHED = "🤖✅Téléchargement terminé!!!, traitement en cours..."
 
-IMPOSSIBLE_DOWNLOAD = "<b>🤖Je ne peux pas télécharger de fichier dépasssant 2Go</b>"
+IMPOSSIBLE_DOWNLOAD = "🤖Je ne peux pas télécharger de fichier dépasssant 2Go"
 
+FILE_UPLOADING = "🤖ᴜᴘʟᴏᴀᴅ ᴇɴ ᴄᴏᴜʀꜱ.."
+
+FILE_UPLOAD_FAILED = "❌Echec lors de l'envoi du fichier"
