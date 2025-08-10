@@ -18,3 +18,7 @@ class Config:
 
     DOWNLOAD_DIR = "./downloads/"
 
+    FIREBASE_URL = os.getenv("FIREBASE_URL")
+
+    FIREBASE_KEY = os.getenv("FIREBASE_KEY")
+

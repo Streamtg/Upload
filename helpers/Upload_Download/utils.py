@@ -3,7 +3,7 @@ import time
 
 from pyrogram.types import Message
 
-from helpers import messages
+from globals import messages
 from helpers.Upload_Download.components import generate_cancel_button
 
 

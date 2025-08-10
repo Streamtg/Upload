@@ -3,8 +3,8 @@ import time
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from pyrogram import Client
-from helpers import messages
-from helpers.Upload_Download.downloader.DownloadResult import DownloadResult
+from globals import messages
+# from helpers.Upload_Download.downloader.DownloadResult import DownloadResult
 from helpers.Upload_Download.uploader.UploadResult import UploadResult
 from helpers.Upload_Download.uploader.ffmpeg import take_screen_shot
 
@@ -13,7 +13,7 @@ from helpers.Upload_Download.utils import progress_func
 
 async def upload_file(
         bot: Client,
-        file : DownloadResult,
+        file : object,
         thumbnail: str | None = None,
         caption: str | None = None
 ) -> UploadResult:

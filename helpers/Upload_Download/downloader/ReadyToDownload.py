@@ -6,11 +6,11 @@ import aiofiles
 import os
 from pyrogram.client import Client
 from pyrogram.enums import ParseMode
-import helpers.messages as messages
+import globals.messages as messages
 from config import Config
 from helpers.Upload_Download.downloader.DownloadResult import DownloadResult
 from helpers.utils import log_admin
-from helpers.Upload_Download.utils import progress_func, sanitize_filename
+from helpers.Upload_Download.utils import progress_func, sanitize_filename, humanbytes
 
 
 
@@ -29,6 +29,10 @@ class ReadyToDownload:
         return self._file_size
 
     @property
+    def file_size_human(self):
+        return humanbytes(self._file_size)
+
+    @property
     def file_download_url(self):
         return self._download_url
 
@@ -43,6 +47,10 @@ class ReadyToDownload:
     @property
     def filename_with_ext(self):
         return self._filename + self._file_extension
+
+    @property
+    def chat_id(self):
+        return self._chat_id
 
     async def download_file(
             self,

@@ -1,8 +1,10 @@
-hachoir
 pyrogram
+pyromod
+hachoir
 tgcrypto
 uvloop
 requests
 aiohttp
 aiofiles
 python-dotenv
+firebase-admin
