@@ -159,6 +159,20 @@ class Database:
         except FirebaseError as e:
             await log_admin(f"Erreur lors de la définition de la miniature pour l'utilisateur {user_id}: {e}")
 
+    async def delete_user_thumbnail(self, user_id: int):
+        """
+        Supprime la miniature personnalisée d'un utilisateur.
+        :param user_id: ID Telegram de l'utilisateur
+        """
+        try:
+            (self.ref
+             .child('users')
+             .child(str(user_id))
+             .update(
+                {'thumbnail': None}
+             ))
+        except FirebaseError as e:
+            await log_admin(f"Erreur lors de la suppression de la miniature pour l'utilisateur {user_id}: {e}")
     async def get_user_prefix(self, user_id: int) -> str | None:
         """
         Récupère le préfixe personnalisé d'un utilisateur.

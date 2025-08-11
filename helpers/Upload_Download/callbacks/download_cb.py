@@ -19,6 +19,7 @@ async def background_download_and_upload(bot: Client, file_data : ReadyToDownloa
     """
     chat_id = file_data.chat_id
     download_result = None
+    custom_thumbnail = None
     try:
 
         download_result = await file_data.download_file(
@@ -34,6 +35,12 @@ async def background_download_and_upload(bot: Client, file_data : ReadyToDownloa
 
         custom_thumbnail = await bd.get_user_thumbnail(chat_id)   # Récupération de la miniature personnalisée de l'utilisateur
 
+        if custom_thumbnail:
+            try:
+                custom_thumbnail = await bot.download_media(custom_thumbnail)
+            except:
+                custom_thumbnail = None  # Si la miniature personnalisée échoue, on la met à None
+                pass
         upload_result = await download_result.upload_file(
             bot,
             caption=file_data.filename_with_ext,
@@ -55,58 +62,67 @@ async def background_download_and_upload(bot: Client, file_data : ReadyToDownloa
         if download_result:
             if os.path.exists(download_result.file_path):
                 os.remove(download_result.file_path)
+        if custom_thumbnail :
+            if os.path.exists(custom_thumbnail):
+                os.remove(custom_thumbnail)
         await UserData.remove_download(chat_id)  # Nettoyage des données de téléchargement de l'utilisateur
 
 
 
-async def detect_link(bot : Client, message: Message):
+async def detect_link(_ , message: Message):
     """
     Fonction pour détecter un lien dans un message et lancer le téléchargement du fichier associé.
     """
+    first_msg = await message.reply_text(
+        messages.DETECTING_LINK,
+        reply_to_message_id=message.id
+    )
     user_id = message.chat.id
     # Vérification si l'utilisateur est déjà en train de télécharger un fichier
     if await UserData.in_downloads(user_id):
-        await bot.send_message(
-            user_id,
-            messages.ALREADY_IN_DOWNLOAD,
-            reply_to_message_id=message.id
+        await first_msg.edit_text(
+            messages.ALREADY_IN_DOWNLOAD
+        )
+        return
+    link = message.text.strip()
+    if not link:
+        await first_msg.edit_text(
+            messages.NO_LINK_DETECTED
         )
         return
 
-    link = message.text.strip()
-    if not link:
-        return
+    # Vérification si le lien est valide
     file_data = FirstUrl(link, user_id)
     try:
         file_data = await file_data.get_file_infos()
         file_size = file_data.file_size
         if file_size > 2000 * 1024 * 1024:  # Limite de 2 Go pour les bots Telegram
-            await bot.send_message(
-                user_id,
-                messages.FILE_TOO_LARGE,
-                reply_to_message_id=message.id
+            await first_msg.edit_text(
+                messages.FILE_TOO_LARGE
             )
             return
+
         # Enregistrement de l'utilisateur dans les téléchargements
         await UserData.add_download(user_id, file_data)
 
-        await bot.send_message(
-            user_id,
+        await first_msg.edit_text(
             messages.FILE_READY_TO_DOWNLOAD.format(
                 f"<a href='{file_data.file_download_url}'>lien</a>",
                 file_data.filename_with_ext,
                 f"{file_data.file_size_human if file_size > 0 else 'unknown'} Mo"
             ),
-            reply_to_message_id=message.id,
             reply_markup=generate_rename_or_not_button()
         )
     except ValueError as e:
-        await bot.send_message(
-            user_id,
-            e.__str__(),
-            reply_to_message_id=message.id
+        await first_msg.edit_text(
+            e.__str__()
         )
         return
+    except Exception as e:
+        await UserData.remove_download(user_id)
+        await first_msg.edit_text(
+            messages.ERROR_OCCURRED.format(str(e))
+        )
 
 async def rename_file(bot : Client, update: CallbackQuery):
     """

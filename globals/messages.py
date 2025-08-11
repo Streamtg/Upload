@@ -12,6 +12,8 @@ DOWNLOAD_FINISHED = "🤖✅Téléchargement terminé!!!, traitement en cours...
 ALREADY_IN_DOWNLOAD = ("🤖Vous êtes déjà en train de télécharger un fichier, veuillez pat"
                        "ienter avant d'en lancer un autre.")
 
+NO_LINK_DETECTED = "❌Aucun lien détecté, veuillez réessayer"
+
 FILE_NOT_FOUND = "❌Fichier non trouvé, veuillez recommencer"
 
 IMPOSSIBLE_DOWNLOAD = "🤖Je ne peux pas télécharger de fichier dépasssant 2Go"
@@ -22,8 +24,21 @@ UPLOAD_FAILED = "❌Echec lors de l'envoi du fichier : {}"
 
 ERROR_OCCURRED = "❗️Une erreur s'est produite : {}"
 
+DETECTING_LINK = "🤖Récupération des informations du lien en cours...⏳"
+
 FILE_UPLOADING = "🤖ᴜᴘʟᴏᴀᴅ ᴇɴ ᴄᴏᴜʀꜱ.."
 
+SEND_THUMBNAIL = "📷 Veuillez envoyer la miniature pour vos prochains Uploads"
+
+THUMBNAIL_SET = "✅Miniature définie avec succès, elle sera utilisée pour vos prochains Uploads"
+
+SEND_THUMBNAIL_TIMEOUT = "⏳Temps écoulé pour envoyer la miniature, veuillez recommencer"
+
+THUMBNAIL_DELETED = "✅Miniature supprimée avec succès, elle ne sera plus utilisée pour vos prochains Uploads"
+
+CURRENT_THUMBNAIL = "📷 Voici la miniature actuellement définie pour vos prochains Uploads"
+
+NO_THUMBNAIL_SET = "❌Aucune miniature définie, veuillez en définir une avec /set_thumb"
 ASK_NEW_FILENAME = "📂 Veuillez entrer le nouveau nom du fichier (sans l'extension) :\n\n" \
                     "🪄 <b>Nom actuel du fichier:</b> <code>{}</code>"
 
