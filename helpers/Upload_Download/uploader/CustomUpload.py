@@ -4,9 +4,8 @@ import time
 from pyrogram import Client
 from globals import messages
 from helpers.Upload_Download.uploader.UploadResult import UploadResult
-from helpers.Upload_Download.uploader.ffmpeg import take_screen_shot, extract_duration
 
-from helpers.Upload_Download.utils import progress_func, TimeFormatter
+from helpers.Upload_Download.utils import progress_func
 
 
 async def upload_file(
@@ -24,23 +23,6 @@ async def upload_file(
     :return: un objet UploadResult
     """
     try:
-        #Si l'utilisateur n'a pas spécifié de miniature, on en prend une aléatoire
-        duration = 0
-        if not thumbnail:
-            try:
-                # On essaye d'extraire la durée du fichier pour prendre un moment aléatoire
-                duration = await extract_duration(file.file_path)
-                # On prend un moment aléatoire dans la durée du fichier
-                if duration:
-                    random_moment = int(time.time() * 1000) % duration if duration > 0 else 0
-                    thumbnail = await take_screen_shot(file.file_path, str(file.chat_id), random_moment)
-            except:
-                pass
-        if "{duration}" in caption:
-            if duration > 0:
-                duration /= 1000    #Conversion en millisecondes pour la fonction TimeFormatter
-            caption = caption.format(duration=TimeFormatter(duration))
-
         await file.editable_message.edit_text(messages.FILE_UPLOADING)
         start = time.time()
         send_file = await bot.send_document(

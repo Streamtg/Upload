@@ -78,6 +78,9 @@ Poids : (Le poids du film)
 """
 
 CAPTION_SET_DONE = "✅Légende mise à jour avec succès"
+
+CAPTION_DELETE = '✅Légende supprimée avec succès'
+
 ABOUT = """™️ A-PROPOS
 
 📝 Langage: <a href='https://www.python.org/'>Python 3</a>
@@ -95,4 +98,28 @@ FILE_READY_TO_DOWNLOAD = "📥 Comment voulez uploader ce {} ?\n\n" \
                          "📏 <b>Taille du fichier:</b> <code>{}</code>"
 
 HELP = """🤖AIDE
+
+<b>Voici les commandes du bot et leurs descriptions :</b>
+
+/set_thumb - Mets à jour votre miniature</blockquote>
+
+/show_thumb - Montre votre miniature actuelle
+
+/del_thumb - Supprime votre miniatuer actuelle
+
+/settings - Montre les paramètres 
+
+/help - Affiche ce message d'aide
+
+/set_caption - Mets à jour la légende des fichiers qui seront envoyés
+
+/set_prefix - Mets à jour le préfixe des fichiers qui seront envoyés
+
+/set_suffix - Mets à jour le suffixe des fichiers qui seront envoyés
+
+/del_caption - Supprime la légende actuelle
+
+/del_prefix - Supprime le préfixe
+
+/del_suffix - Supprime le suffixe actuel
 """

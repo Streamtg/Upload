@@ -189,6 +189,21 @@ class Database:
             await log_admin(f"Erreur lors de la récupération de la légende pour l'utilisateur {user_id}: {e}")
             return None
 
+    async def delete_user_caption(self, user_id: int):
+        """
+        Supprime la légende personnalisée d'un utilisateur.
+        :param user_id: ID Telegram de l'utilisateur
+        """
+        try:
+            (self.ref
+             .child('users')
+             .child(str(user_id))
+             .update(
+                {'caption': None}
+             ))
+        except FirebaseError as e:
+            await log_admin(f"Erreur lors de la suppression de la légende pour l'utilisateur {user_id}: {e}")
+
     async def get_user_download_utils(self, user_id : int) -> dict | None:
         """
         Récupere en une fois tous les données utiles au téléchargement pour un utilisateur

@@ -1,4 +1,5 @@
 import os
+import time
 
 from pyrogram import filters
 from pyromod import Client
@@ -6,12 +7,15 @@ from pyrogram.types import CallbackQuery
 from pyrogram.types import Message, ForceReply
 from pyromod.exceptions import ListenerTimeout, ListenerStopped
 import globals.messages as messages
+from helpers.Upload_Download.uploader.ffmpeg import take_screen_shot, extract_duration
 from helpers.Upload_Download.downloader.FirstUrl import FirstUrl
 from helpers.Upload_Download.downloader.ReadyToDownload import ReadyToDownload
 from globals.database import bd
 from asyncio import create_task
 from helpers.Upload_Download.components import generate_rename_or_not_button, add_prefix_suffix, parse_caption
 from globals.data_ground import UserData
+from helpers.Upload_Download.utils import TimeFormatter
+
 
 async def background_download_and_upload(bot: Client, file_data : ReadyToDownload):
     """
@@ -42,14 +46,36 @@ async def background_download_and_upload(bot: Client, file_data : ReadyToDownloa
 
         custom_thumbnail = utils['thumbnail']
         custom_caption = utils['caption']
+
+        # On essaye d'extraire la durée du fichier
+        duration = await extract_duration(download_result.file_path)
+
         if custom_caption:
             custom_caption = await parse_caption(file_data, custom_caption)
+            if "{duration}" in custom_caption:
+                if duration > 0:
+                    duration *= 1000  # Conversion en millisecondes pour la fonction TimeFormatter
+                custom_caption = custom_caption.format(duration=TimeFormatter(duration))
+
+        # Si l'utilisateur a une miniature, on essaye de la download
         if custom_thumbnail:
             try:
                 custom_thumbnail = await bot.download_media(custom_thumbnail)
             except:
-                custom_thumbnail = None  # Si la miniature personnalisée échoue, on la met à None
+                custom_thumbnail = None  # Si le téléchargement de la miniature personnalisée échoue, on la met à None
                 pass
+        else:
+            # Si l'utilisateur n'a pas spécifié de miniature, on en prend une aléatoire directement dans le fichier
+            try:
+                # On prend un moment aléatoire dans la durée du fichier
+                if duration:
+                    random_moment = int(time.time() * 1000) % duration if duration > 0 else 0
+
+                    #Capture d'écran du moment aléatoire
+                    custom_thumbnail = await take_screen_shot(download_result.file_path, str(download_result.chat_id), random_moment)
+            except:
+                pass
+
         upload_result = await download_result.upload_file(
             bot,
             caption=custom_caption,

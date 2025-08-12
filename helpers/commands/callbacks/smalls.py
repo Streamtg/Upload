@@ -152,6 +152,15 @@ async def set_caption(_, message : Message):
     except Exception as e:
         await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
 
+async def del_caption(_, message : Message):
+    try:
+        await bd.delete_user_caption(message.from_user.id)
+        await message.reply_text(
+            messages.CAPTION_DELETE
+        )
+    except Exception as e:
+        await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
+
 
 
 

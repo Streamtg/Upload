@@ -20,7 +20,7 @@ async def take_screen_shot(video_file : str, output_directory : str, ttl : float
     :return: This will return screenshot image path.
     """
 
-    output_dir = f'{output_directory}/{time.time()}/'
+    output_dir = Config.DOWNLOAD_DIR
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     output_filepath = output_dir + "thumbnail.jpeg"
@@ -51,6 +51,9 @@ async def take_screen_shot(video_file : str, output_directory : str, ttl : float
     return output_filepath if os.path.lexists(output_filepath) else None
 
 async def extract_duration(file_path : str) -> int :
+    """
+    Fonction pour extraire la durée d'un fichier, retourne la durée si elle existe, 0 sinon
+    """
     duration = 0
     parser = createParser(file_path)
     metadata = extractMetadata(parser)

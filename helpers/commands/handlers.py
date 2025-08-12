@@ -7,7 +7,8 @@ from helpers.commands.callbacks.smalls import (
     settings,
     calback_queries_func,
     help_command,
-    set_caption
+    set_caption,
+    del_caption
 )
 
 def register_commands_handlers(bot):
@@ -22,5 +23,6 @@ def register_commands_handlers(bot):
     bot.add_handler(CallbackQueryHandler(calback_queries_func, filters.regex("^(set_thumbnail|delete_thumbnail|show_thumbnail|close|settings|info_rename|help|about)$")))
     bot.add_handler(MessageHandler(help_command, filters.command("help") & filters.private))
     bot.add_handler(MessageHandler(set_caption, filters.command("set_caption") & filters.private))
+    bot.add_handler(MessageHandler(del_caption, filters.command("del_caption") & filters.private))
 
     # Vous pouvez ajouter d'autres gestionnaires de commandes ici si nécessaire.
