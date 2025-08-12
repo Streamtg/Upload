@@ -189,6 +189,24 @@ class Database:
             await log_admin(f"Erreur lors de la récupération de la légende pour l'utilisateur {user_id}: {e}")
             return None
 
+    async def get_user_download_utils(self, user_id : int) -> dict | None:
+        """
+        Récupere en une fois tous les données utiles au téléchargement pour un utilisateur
+        """
+        try:
+            user = await self.get_user(user_id)
+            utils = dict(
+                caption=user.get('caption'),
+                thumbnail=user.get('thumbnail'),
+                suffix=user.get('suffix'),
+                prefix=user.get('prefix')
+            )
+            return utils
+        except FirebaseError as e:
+            await log_admin(f"Erreur lors de la récupération des utilitaires pour l'utilisateur {user_id}: {e}")
+            return None
+
+
     async def delete_user_thumbnail(self, user_id: int):
         """
         Supprime la miniature personnalisée d'un utilisateur.

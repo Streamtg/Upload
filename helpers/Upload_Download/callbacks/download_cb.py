@@ -10,7 +10,7 @@ from helpers.Upload_Download.downloader.FirstUrl import FirstUrl
 from helpers.Upload_Download.downloader.ReadyToDownload import ReadyToDownload
 from globals.database import bd
 from asyncio import create_task
-from helpers.Upload_Download.components import generate_rename_or_not_button
+from helpers.Upload_Download.components import generate_rename_or_not_button, add_prefix_suffix, parse_caption
 from globals.data_ground import UserData
 
 async def background_download_and_upload(bot: Client, file_data : ReadyToDownload):
@@ -18,9 +18,15 @@ async def background_download_and_upload(bot: Client, file_data : ReadyToDownloa
     Fonction pour télécharger un fichier en arrière-plan et l'envoyer à l'utilisateur.
     """
     chat_id = file_data.chat_id
-    download_result = None
-    custom_thumbnail = None
+    custom_thumbnail, download_result, custom_caption, prefix, sufix = None, None, None, None, None
     try:
+        utils = await bd.get_user_download_utils(chat_id)   #Récupere toutes les données utiles pour le téléchargement
+        prefix = utils['prefix']
+        sufix = utils['suffix']
+        file_name = file_data.filename
+
+        #Ajout du préfixe et du suffixe personnalisé au nom du fichier
+        file_data.filename = add_prefix_suffix(file_name, prefix, sufix)
 
         download_result = await file_data.download_file(
             bot,
@@ -33,8 +39,11 @@ async def background_download_and_upload(bot: Client, file_data : ReadyToDownloa
             )
             return
 
-        custom_thumbnail = await bd.get_user_thumbnail(chat_id)   # Récupération de la miniature personnalisée de l'utilisateur
 
+        custom_thumbnail = utils['thumbnail']
+        custom_caption = utils['caption']
+        if custom_caption:
+            custom_caption = await parse_caption(file_data, custom_caption)
         if custom_thumbnail:
             try:
                 custom_thumbnail = await bot.download_media(custom_thumbnail)
@@ -43,8 +52,8 @@ async def background_download_and_upload(bot: Client, file_data : ReadyToDownloa
                 pass
         upload_result = await download_result.upload_file(
             bot,
-            caption=file_data.filename_with_ext,
-            thumbnail=custom_thumbnail  # Vous pouvez spécifier une miniature si nécessaire
+            caption=custom_caption,
+            thumbnail=custom_thumbnail,  # Vous pouvez spécifier une miniature si nécessaire
         )
         if not upload_result.success:
             await bot.send_message(
@@ -62,7 +71,7 @@ async def background_download_and_upload(bot: Client, file_data : ReadyToDownloa
         if download_result:
             if os.path.exists(download_result.file_path):
                 os.remove(download_result.file_path)
-        if custom_thumbnail :
+        if custom_thumbnail:
             if os.path.exists(custom_thumbnail):
                 os.remove(custom_thumbnail)
         await UserData.remove_download(chat_id)  # Nettoyage des données de téléchargement de l'utilisateur

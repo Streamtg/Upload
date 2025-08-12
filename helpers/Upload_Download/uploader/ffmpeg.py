@@ -3,7 +3,9 @@ import os
 import time
 import asyncio
 from typing import Optional
-
+from hachoir.metadata import extractMetadata
+from hachoir.parser import createParser
+from config import Config
 
 async def take_screen_shot(video_file : str, output_directory : str, ttl : float | int) -> Optional[str]:
     """
@@ -47,3 +49,12 @@ async def take_screen_shot(video_file : str, output_directory : str, ttl : float
         # ffmpeg a échoué
         raise RuntimeError(f"FFmpeg error: {stderr.decode().strip()}")
     return output_filepath if os.path.lexists(output_filepath) else None
+
+async def extract_duration(file_path : str) -> int :
+    duration = 0
+    parser = createParser(file_path)
+    metadata = extractMetadata(parser)
+    if metadata.has("duration"):
+        duration = metadata.get('duration').seconds
+    parser.close()
+    return duration
