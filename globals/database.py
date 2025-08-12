@@ -159,6 +159,36 @@ class Database:
         except FirebaseError as e:
             await log_admin(f"Erreur lors de la définition de la miniature pour l'utilisateur {user_id}: {e}")
 
+    async def set_user_caption(self, user_id : int, caption : str):
+        """
+        Défini la légende pour les uploads d'un utilisateur
+        :param user_id: Telegram user id
+        :param caption: La légende
+        :return: None
+        """
+        try:
+            (self.ref
+             .child('users')
+             .child(str(user_id))
+             .update(
+                {'caption': caption}
+             ))
+        except FirebaseError as e:
+            await log_admin(f"Erreur lors de la définition de la légende pour l'utilisateur {user_id}: {e}")
+
+    async def get_user_caption(self, user_id : int) -> str | None:
+        """
+        Recupere la légende pour les uploads d'un utilisateur
+        :param user_id: Telegram user id
+        :return: La légende si tout se passe bien
+        """
+        try:
+            user = await self.get_user(user_id)
+            return user.get('caption') if user else None
+        except FirebaseError as e:
+            await log_admin(f"Erreur lors de la récupération de la légende pour l'utilisateur {user_id}: {e}")
+            return None
+
     async def delete_user_thumbnail(self, user_id: int):
         """
         Supprime la miniature personnalisée d'un utilisateur.
@@ -173,6 +203,7 @@ class Database:
              ))
         except FirebaseError as e:
             await log_admin(f"Erreur lors de la suppression de la miniature pour l'utilisateur {user_id}: {e}")
+
     async def get_user_prefix(self, user_id: int) -> str | None:
         """
         Récupère le préfixe personnalisé d'un utilisateur.

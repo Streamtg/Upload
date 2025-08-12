@@ -1,17 +1,11 @@
-import os
-
-from pyrogram import filters
 from pyromod import Client
 from pyrogram.types import CallbackQuery
-from pyrogram.types import Message, ForceReply
+from pyrogram.types import Message
 from pyromod.exceptions import ListenerTimeout, ListenerStopped
 import globals.messages as messages
-from helpers.Upload_Download.downloader.FirstUrl import FirstUrl
-from helpers.Upload_Download.downloader.ReadyToDownload import ReadyToDownload
 from globals.database import bd
-from asyncio import create_task
-from helpers.Upload_Download.components import generate_rename_or_not_button
-from globals.data_ground import UserData
+from helpers.commands.components import generate_settings_keyboard, generate_help_keyboard
+
 
 async def set_thumbnail(bot : Client, message : Message) :
     """
@@ -20,15 +14,7 @@ async def set_thumbnail(bot : Client, message : Message) :
     user_id = message.from_user.id
     try:
         if not message.reply_to_message or not message.reply_to_message.photo:
-            reply_photo = await bot.ask(
-                chat_id=message.chat.id,
-                text=messages.SEND_THUMBNAIL,
-                filters=filters.photo,
-                reply_markup=ForceReply(selective=True),
-                timeout=20
-            )
-            await bd.set_user_thumbnail(user_id, reply_photo.photo.file_id)
-            await reply_photo.reply_text(messages.THUMBNAIL_SET)
+            await message.reply_text(messages.REPLY_TO_PHOTO)
             return
         reply_photo = message.reply_to_message.photo
         photo_id = reply_photo.file_id
@@ -42,7 +28,7 @@ async def set_thumbnail(bot : Client, message : Message) :
     except Exception as e:
         await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
 
-async def delete_thumbnail(bot : Client, message : Message) :
+async def delete_thumbnail(_, message : Message) :
     """
     Fonction pour supprimer la miniature définie par l'utilisateur.
     """
@@ -68,6 +54,101 @@ async def show_thumbnail(bot : Client, message : Message) :
             )
         else:
             await message.reply_text(messages.NO_THUMBNAIL_SET)
+    except Exception as e:
+        await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
+
+async def settings(_, message : Message) :
+    """
+    Fonction pour afficher les paramètres.
+    """
+    try:
+
+        await message.reply_text(
+            messages.SETTINGS,
+            reply_markup=generate_settings_keyboard()
+        )
+    except Exception as e:
+        await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
+
+async def help_command(_, message : Message) :
+    """
+    Fonction pour afficher l'aide.
+    """
+    try:
+        await message.reply_text(
+            messages.HELP,
+            reply_markup=generate_help_keyboard()
+        )
+    except Exception as e:
+        await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
+
+async def calback_queries_func(bot: Client, query: CallbackQuery):
+    """
+    Fonction pour gérer les requêtes de rappel.
+    """
+    user_id = query.from_user.id
+    try:
+        if query.data == "set_thumbnail":
+            await query.message.reply_text(
+                messages.REPLY_TO_PHOTO,
+            )
+            return
+        elif query.data == "delete_thumbnail":
+            await bd.delete_user_thumbnail(user_id)
+            await query.message.reply_text(messages.THUMBNAIL_DELETED)
+        elif query.data == "show_thumbnail":
+            thumbnail = await bd.get_user_thumbnail(user_id)
+            if thumbnail:
+                await bot.send_photo(
+                    chat_id=user_id,
+                    photo=thumbnail,
+                    caption=messages.CURRENT_THUMBNAIL
+                )
+            else:
+                await query.message.reply_text(messages.NO_THUMBNAIL_SET)
+            return
+        elif query.data == "info_rename":
+            sfx = await bd.get_user_suffix(user_id)
+            prfx = await bd.get_user_prefix(user_id)
+            custom_caption = await bd.get_user_caption(user_id)
+            await query.message.reply_text(
+                messages.INFO_RENAME.format(prfx, sfx, custom_caption),
+            )
+        elif query.data == "help":
+            await query.message.edit_text(
+                messages.HELP,
+                reply_markup=generate_help_keyboard()
+            )
+            return
+        elif query.data == "about":
+            await query.message.edit_text(
+                messages.ABOUT,
+                disable_web_page_preview=True
+            )
+        elif query.data == "settings":
+            await query.message.edit_text(
+                messages.SETTINGS,
+                reply_markup=generate_settings_keyboard()
+            )
+            return
+        elif query.data == "close":
+            await query.message.delete()
+    except Exception as e:
+        await query.answer(messages.ERROR_OCCURRED.format(str(e)), show_alert=True)
+
+async def set_caption(_, message : Message):
+    try:
+        args = message.text.split()[1:]
+        if not args:
+            await message.reply_text(
+                messages.SET_CAPTION
+            )
+            return
+        caption = " ".join(args)
+        await bd.set_user_caption(message.from_user.id, caption)
+        await message.reply_text(
+            messages.CAPTION_SET_DONE
+        )
     except Exception as e:
         await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
 
