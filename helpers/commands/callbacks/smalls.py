@@ -1,11 +1,19 @@
 from pyromod import Client
-from pyrogram.types import CallbackQuery
+from pyrogram.types import CallbackQuery, BotCommand
 from pyrogram.types import Message
 from pyromod.exceptions import ListenerTimeout, ListenerStopped
+
 import globals.messages as messages
 from globals.database import bd
-from helpers.commands.components import generate_settings_keyboard, generate_help_keyboard
+from helpers.commands.components import generate_settings_keyboard, generate_help_keyboard, generate_start_keyboard
 
+
+async def start(_, message : Message):
+    await message.reply_text(
+        messages.START_BOT.format(f"{message.from_user.first_name or ''} {message.from_user.last_name or ''}"),
+        reply_markup=generate_start_keyboard()
+    )
+    await bd.add_user(message.from_user.id, message.from_user.username)
 
 async def set_thumbnail(bot : Client, message : Message) :
     """
@@ -157,6 +165,56 @@ async def del_caption(_, message : Message):
         await bd.delete_user_caption(message.from_user.id)
         await message.reply_text(
             messages.CAPTION_DELETE
+        )
+    except Exception as e:
+        await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
+
+async def set_prefix(_, message : Message):
+    try:
+        args = message.text.split()[1:]
+        if not args:
+            await message.reply_text(
+                messages.SET_PREFIX
+            )
+            return
+        prefix = " ".join(args)
+        await bd.set_user_prefix(message.from_user.id, prefix)
+        await message.reply_text(
+            messages.PREFIX_SET_DONE
+        )
+    except Exception as e:
+        await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
+
+async def del_prefix(_, message : Message):
+    try:
+        await bd.delete_user_prefix(message.from_user.id)
+        await message.reply_text(
+            messages.PREFIX_DELETE
+        )
+    except Exception as e:
+        await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
+
+async def set_suffix(_, message : Message):
+    try:
+        args = message.text.split()[1:]
+        if not args:
+            await message.reply_text(
+                messages.SET_SUFFIX
+            )
+            return
+        suffix = " ".join(args)
+        await bd.set_user_suffix(message.from_user.id, suffix)
+        await message.reply_text(
+            messages.SUFFIX_SET_DONE
+        )
+    except Exception as e:
+        await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))
+
+async def del_suffix(_, message: Message):
+    try:
+        await bd.delete_user_suffix(message.from_user.id)
+        await message.reply_text(
+            messages.SUFFIX_DELETE
         )
     except Exception as e:
         await message.reply_text(messages.ERROR_OCCURRED.format(str(e)))

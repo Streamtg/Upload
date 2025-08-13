@@ -1,5 +1,17 @@
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+def generate_start_keyboard() -> InlineKeyboardMarkup:
+    """
+    Génère un clavier de start avec des boutons pour les différentes options.
+    """
+    return InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("🙋🏾‍♂️ AIDE", callback_data="help"),
+                InlineKeyboardButton("™️ A-PROPOS", callback_data="about"),
+            ]
+        ]
+    )
 def generate_settings_keyboard() -> InlineKeyboardMarkup:
     """
     Génère un clavier de paramètres avec des boutons pour les différentes options.
@@ -13,7 +25,7 @@ def generate_settings_keyboard() -> InlineKeyboardMarkup:
                 InlineKeyboardButton("📸 DÉFINIR MINIATURE", callback_data="set_thumbnail"),
             ],
             [
-                InlineKeyboardButton("❌ Supprimer Miniature", callback_data="delete_thumbnail")
+                InlineKeyboardButton("🖼 Supprimer Miniature", callback_data="delete_thumbnail")
             ],
 
             [

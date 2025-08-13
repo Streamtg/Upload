@@ -204,6 +204,36 @@ class Database:
         except FirebaseError as e:
             await log_admin(f"Erreur lors de la suppression de la légende pour l'utilisateur {user_id}: {e}")
 
+    async def delete_user_prefix(self, user_id : int):
+        """
+        Supprime le préfixe personnalisé d'un utilisateur.
+        :param user_id: ID Telegram de l'utilisateur
+        """
+        try:
+            (self.ref
+             .child('users')
+             .child(str(user_id))
+             .update(
+                {'prefix': None}
+             ))
+        except FirebaseError as e:
+            await log_admin(f"Erreur lors de la suppression du préfixe pour l'utilisateur {user_id}: {e}")
+
+    async def delete_user_suffix(self, user_id : int):
+        """
+        Supprime le suffixe personnalisé d'un utilisateur.
+        :param user_id: ID Telegram de l'utilisateur
+        """
+        try:
+            (self.ref
+             .child('users')
+             .child(str(user_id))
+             .update(
+                {'suffix': None}
+             ))
+        except FirebaseError as e:
+            await log_admin(f"Erreur lors de la suppression du suffixe pour l'utilisateur {user_id}: {e}")
+
     async def get_user_download_utils(self, user_id : int) -> dict | None:
         """
         Récupere en une fois tous les données utiles au téléchargement pour un utilisateur
@@ -220,7 +250,6 @@ class Database:
         except FirebaseError as e:
             await log_admin(f"Erreur lors de la récupération des utilitaires pour l'utilisateur {user_id}: {e}")
             return None
-
 
     async def delete_user_thumbnail(self, user_id: int):
         """

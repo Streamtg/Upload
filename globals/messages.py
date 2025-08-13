@@ -77,10 +77,31 @@ Poids : (Le poids du film)
 - duration : Répresente la durée du fichier (Si c'est une vidéo ou un audio)
 """
 
+SET_PREFIX = """<b>Pour définir un préfixe par défaut, envoyez-la avec la commande</b>:
+
+<u><b>Exemple</b></u>
+/set_prefix Préfixe de tous mes fichiers
+"""
+
+SET_SUFFIX = """<b>Pour définir un suffixe par défaut, envoyez-la avec la commande</b>:
+
+<u><b>Exemple</b></u>
+/set_suffix Préfixe de tous mes fichiers
+"""
+
 CAPTION_SET_DONE = "✅Légende mise à jour avec succès"
+PREFIX_SET_DONE = "✅Préfixe mis à jour avec succès"
+SUFFIX_SET_DONE = "✅Suffixe mis à jour avec succès"
 
 CAPTION_DELETE = '✅Légende supprimée avec succès'
 
+SUFFIX_DELETE = '✅Suffixe supprimé avec succès'
+
+PREFIX_DELETE = '✅Préfixe supprimé avec succès'
+
+START_BOT = """<b>Salut {} 👋🏾</b>
+
+<em>Je suis un robot Uploader de lien. Envoyez-moi simplement un lien de téléchargement direct et je téléchargerai le fichier à distance sur Telegram</em>🤖"""
 ABOUT = """™️ A-PROPOS
 
 📝 Langage: <a href='https://www.python.org/'>Python 3</a>
@@ -89,9 +110,9 @@ ABOUT = """™️ A-PROPOS
 
 Blablablablaaaaaaaaaa
 """
-INFO_RENAME = "◀️ PRÉFIXE : {}\n\n" \
-            "◀️ SUFFIXE : {}\n\n"\
-            "💡LEGENDE : {}"
+INFO_RENAME = "<b>⬅️ PRÉFIXE :</b> {}\n\n" \
+            "<b>➡️ SUFFIXE :</b> {}\n\n"\
+            "<b>📜 LEGENDE :</b> {}"
 
 FILE_READY_TO_DOWNLOAD = "📥 Comment voulez uploader ce {} ?\n\n" \
                          "📂 <b>Nom du fichier:</b> <code>{}</code>\n\n" \
@@ -101,25 +122,27 @@ HELP = """🤖AIDE
 
 <b>Voici les commandes du bot et leurs descriptions :</b>
 
-/set_thumb - Mets à jour votre miniature</blockquote>
+/start - 🚀 Lance le bot
 
-/show_thumb - Montre votre miniature actuelle
+/set_thumb - 📸 Mets à jour votre miniature
 
-/del_thumb - Supprime votre miniatuer actuelle
+/show_thumb - 🖼 Montre votre miniature actuelle
 
-/settings - Montre les paramètres 
+/del_thumb - 🗑🖼 Supprime votre miniature actuelle
 
-/help - Affiche ce message d'aide
+/settings - ⚙️ Montre les paramètres 
 
-/set_caption - Mets à jour la légende des fichiers qui seront envoyés
+/help - 🆘 Affiche ce message d'aide
 
-/set_prefix - Mets à jour le préfixe des fichiers qui seront envoyés
+/set_caption - 📜 Mets à jour la légende des fichiers qui seront envoyés
 
-/set_suffix - Mets à jour le suffixe des fichiers qui seront envoyés
+/set_prefix - ⬅️ Mets à jour le préfixe des fichiers qui seront envoyés
 
-/del_caption - Supprime la légende actuelle
+/set_suffix - ➡️ Mets à jour le suffixe des fichiers qui seront envoyés
 
-/del_prefix - Supprime le préfixe
+/del_caption - 🗑 Supprime la légende actuelle
 
-/del_suffix - Supprime le suffixe actuel
+/del_prefix - 🗑 Supprime le préfixe
+
+/del_suffix - 🗑 Supprime le suffixe actuel
 """
