@@ -11,11 +11,8 @@ Bot Python pour automatiser le téléchargement, la modification de métadonnée
 - Architecture modulaire
 
 ## ⚙️ Installation
-<details>
-<summary><h3>
-- <b> ᴍᴇᴛʜᴏᴅᴇꜱ ᴅᴇ ᴅᴇᴘʟᴏʏᴇᴍᴇɴᴛ 👨🏾‍💻 </b>
-</h3>
-</summary>
+### ᴍᴇᴛʜᴏᴅᴇꜱ ᴅᴇ ᴅᴇᴘʟᴏʏᴇᴍᴇɴᴛ 👨🏾‍💻
+
 <h3 align="center">
     ─「 ᴅᴇᴘʟᴏʏᴇʀ ꜱᴜʀ ʜᴇʀᴏᴋᴜ 」─
 </h3>
@@ -43,7 +40,6 @@ Bot Python pour automatiser le téléchargement, la modification de métadonnée
 <h3 align="center">
     ─「 ᴅᴇᴘʟᴏʏᴇʀ ꜱᴜʀ ᴠᴘꜱ 」─
 </h3>
-</details>
 
 ---
 
