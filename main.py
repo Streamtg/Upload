@@ -1,3 +1,8 @@
+import uvloop
+#Module de speed up
+uvloop.install()
+
+
 from pyrogram import Client
 from pyrogram.types import BotCommand
 

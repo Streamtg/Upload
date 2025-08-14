@@ -1,7 +1,10 @@
 # Upload Metadata Change Bot 🤖
 
 Bot Python pour automatiser le téléchargement, la modification de métadonnées et l’upload de fichiers.
+- 📝 Langage: <a href='https://www.python.org/'>Python 3</a>
 
+
+- 🧰 Framework: <a href='https://github.com/pyrogram/pyrogram'>Pyrogram</a> & <a href='https://github.com/usernein/pyromod'>PyroMod</a>
 ## Fonctionnalités
 
 - Téléchargement de fichiers avec gestion avancée
