@@ -116,9 +116,9 @@ async def calback_queries_func(bot: Client, query: CallbackQuery):
                 await query.message.reply_text(messages.NO_THUMBNAIL_SET)
             return
         elif query.data == "info_rename":
-            sfx = await bd.get_user_suffix(user_id)
-            prfx = await bd.get_user_prefix(user_id)
-            custom_caption = await bd.get_user_caption(user_id)
+            sfx = await bd.get_user_suffix(user_id) or 'Aucun'
+            prfx = await bd.get_user_prefix(user_id) or 'Aucun'
+            custom_caption = await bd.get_user_caption(user_id) or 'Aucun'
             await query.message.reply_text(
                 messages.INFO_RENAME.format(prfx, sfx, custom_caption),
             )

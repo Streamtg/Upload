@@ -67,7 +67,8 @@ class ReadyToDownload:
         :return: DownloadResult, le résultat du téléchargement
         """
         filename_with_ext = sanitize_filename(self.filename_with_ext)
-        file_path = path + filename_with_ext
+        user_path = path + f"{chat_id}/"
+        file_path = user_path + filename_with_ext
 
         first_msg = await bot.send_message(
             chat_id,
@@ -75,8 +76,8 @@ class ReadyToDownload:
             parse_mode=ParseMode.HTML
         )
         try:
-            if not os.path.isdir(path):
-                os.makedirs(path, exist_ok=True)
+            if not os.path.exists(user_path):
+                os.makedirs(user_path, exist_ok=True)
             try:
                 async with ClientSession() as session:
                     async with session.get(self._download_url) as response:

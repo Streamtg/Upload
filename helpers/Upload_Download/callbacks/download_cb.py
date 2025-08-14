@@ -53,8 +53,7 @@ async def background_download_and_upload(bot: Client, file_data : ReadyToDownloa
         if custom_caption:
             custom_caption = await parse_caption(file_data, custom_caption)
             if "{duration}" in custom_caption:
-                if duration > 0:
-                    duration *= 1000  # Conversion en millisecondes pour la fonction TimeFormatter
+                duration *= 1000  # Conversion en millisecondes pour la fonction TimeFormatter
                 custom_caption = custom_caption.format(duration=TimeFormatter(duration))
 
         # Si l'utilisateur a une miniature, on essaye de la download
@@ -144,7 +143,7 @@ async def detect_link(_ , message: Message):
             messages.FILE_READY_TO_DOWNLOAD.format(
                 f"<a href='{file_data.file_download_url}'>lien</a>",
                 file_data.filename_with_ext,
-                f"{file_data.file_size_human if file_size > 0 else 'unknown'} Mo"
+                f"{file_data.file_size_human if file_size > 0 else 'unknown'}"
             ),
             reply_markup=generate_rename_or_not_button()
         )

@@ -1,6 +1,5 @@
 
 import os
-import time
 import asyncio
 from typing import Optional
 from hachoir.metadata import extractMetadata
@@ -57,6 +56,8 @@ async def extract_duration(file_path : str) -> int :
     duration = 0
     parser = createParser(file_path)
     metadata = extractMetadata(parser)
+    if not metadata:
+        return duration
     if metadata.has("duration"):
         duration = metadata.get('duration').seconds
     parser.close()
