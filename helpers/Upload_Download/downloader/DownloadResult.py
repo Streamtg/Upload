@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pyrogram.types import Message
 from helpers.Upload_Download.uploader.CustomUpload import upload_file
 from helpers.Upload_Download.uploader.UploadResult import UploadResult
-
+from config import Config
 
 @dataclass
 class DownloadResult:
@@ -21,6 +21,9 @@ class DownloadResult:
         if not caption:
             caption = self.file_final_name if self.file_final_name else "Fichier téléchargé"
 
+        #Parse le caption en gras pour plus d'estéthique
+
+        caption = f'<b>{caption}</b>'
         upload_result = await upload_file(
             bot,
             self,

@@ -9,7 +9,7 @@ from pyrogram.enums import ParseMode
 import globals.messages as messages
 from config import Config
 from helpers.Upload_Download.downloader.DownloadResult import DownloadResult
-from helpers.utils import log_admin
+from globals.utils import log_admin
 from helpers.Upload_Download.utils import progress_func, sanitize_filename, humanbytes
 
 

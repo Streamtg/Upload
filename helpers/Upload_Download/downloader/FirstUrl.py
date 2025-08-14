@@ -5,7 +5,7 @@ from aiohttp.client_exceptions import ClientConnectorDNSError, ClientResponseErr
 import re
 from urllib.parse import unquote, urlparse
 
-from helpers.utils import log_admin
+from globals.utils import log_admin
 
 async def get_filename_from_headers(headers : dict) -> str | None:
     """

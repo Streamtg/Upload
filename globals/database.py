@@ -5,7 +5,7 @@ from json import loads
 from requests.exceptions import RequestException
 from config import Config
 from firebase_admin.exceptions import FirebaseError
-from helpers.utils import log_admin
+from globals.utils import log_admin
 
 FIREBASE_KEY = loads(Config.FIREBASE_KEY)   # Votre clé privée Firebase
 

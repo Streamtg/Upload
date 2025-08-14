@@ -4,10 +4,10 @@ from aiohttp import ClientSession
 from config import Config
 
 
-async def log_admin(log_text : str, scope : str = "[Renamer Bot]") -> None:
+async def log_admin(log_text : str, scope : str = "Renamer Bot") -> None:
     """
-     Fonction asynchrone pour se notifier sur le bon fonctionnement l'execution du code, fpnctio fonctionne
-     directement par l'API brut de Telegram Bot (Requete GET HTTP)
+     Fonction asynchrone pour se notifier sur le bon fonctionnement l'execution du code, fonction fonctionne
+     directement par l'API brut de Telegram Bot (Requete GET&POST HTTP)
     :param log_text: Texte à recevoir
     :type log_text: str
     :param scope: Scope dans lequel la fonction est executé afin de facilité le deboguage
@@ -24,7 +24,7 @@ async def log_admin(log_text : str, scope : str = "[Renamer Bot]") -> None:
         try:
             async with session.post(url, data=data) as response:
                 if response.status != 200:
-                    print(f"❌ Échec de la notification Telegram vers vous meme"
+                    print(f"❌ Échec de la notification Telegram vers vous meme {await response.content.read()}"
                           f"\n\nErreur voulu envoyé : [{scope}] : {log_text}")
         except Exception as e:
             print(f"❌ Erreur notification: {e}\n\nErreur voulu envoyé : [{scope}] : {log_text}")
