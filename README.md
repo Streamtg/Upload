@@ -24,13 +24,13 @@ Bot Python pour automatiser le téléchargement, la modification de métadonnée
   <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy On Heroku"></a>
 </p>
 <h3 align="center">
-    ─「 ᴅᴇᴘʟᴏʏᴇʀ ꜱᴜʀ ʜᴇʀᴏᴋᴜ 」─
+    ─「 ᴅᴇᴘʟᴏʏᴇʀ ꜱᴜʀ ᴋᴏʏᴇʙ 」─
 </h3>
 <p align="center"><a href="https://app.koyeb.com/deploy">
   <img src="https://www.koyeb.com/static/images/deploy/button.svg" alt="Deploy On Koyeb"></a>
 </p>
 <h3 align="center">
-    ─「 ᴅᴇᴘʟᴏʏᴇʀ ꜱᴜʀ ᴋᴏʏᴇʙ 」─
+    ─「 ᴅᴇᴘʟᴏʏᴇʀ ꜱᴜʀ ʀᴀɪʟᴡᴀʏ 」─
 </h3>
 <p align="center"> <a href="https://railway.app/deploy"><img height="45px" src="https://railway.app/button.svg"></a>
 </p>
@@ -98,7 +98,11 @@ FIREBASE_KEY = VOTRE CLE D'AUTHENTIFICATION FIREBASE
 
 Lancer le bot :
 
+### Soit via le DockerFile (Préférable sur serveur)
+
+### Soit manuellement
 ```bash
+sudo apt-get update && apt-get install -y ffmpeg
 python3 main.py
 ```
 ### Puis, dans Telegram :
